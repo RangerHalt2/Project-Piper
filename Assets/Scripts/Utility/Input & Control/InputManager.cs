@@ -5,6 +5,9 @@ public class InputManager : MonoBehaviour
 {
 
     #region Variables
+
+    [SerializeField] private float deadZone = 50f;
+
     [SerializeField] public InputActionAsset playerControls;
 
     [SerializeField] public string actionMapName = "Player";//This should be the name of the entire mapping
@@ -13,11 +16,15 @@ public class InputManager : MonoBehaviour
     [SerializeField] private string movement = "Movement";
     [SerializeField] private string touchPos = "Touch Position";
     [SerializeField] private string touchPress = "Touch Press";
+    [SerializeField] private string jump = "Jump";
+    [SerializeField] private string upSwipe = "Swipe Up";
 
     //This is an action input, each one needs one assigned
     private InputAction moveAction;
     private InputAction touchPosAction;
     private InputAction touchPressAction;
+    private InputAction jumpAction;
+    private InputAction upSwipeAction;
 
     #endregion
 
@@ -26,6 +33,7 @@ public class InputManager : MonoBehaviour
     public Vector2 TouchPosInput { get; private set; }
     public Vector2 TouchPosCurr { get; private set; }
     public bool TouchPressInput { get; private set; }
+    public bool JumpInput { get; private set; }
 
     #endregion
 
@@ -50,6 +58,8 @@ public class InputManager : MonoBehaviour
         moveAction = map.FindAction(movement);
         touchPosAction = map.FindAction(touchPos);
         touchPressAction = map.FindAction(touchPress);
+        jumpAction = map.FindAction(jump);
+        upSwipeAction = map.FindAction(upSwipe);
         RegisterInputActions();
     }
 
@@ -58,12 +68,22 @@ public class InputManager : MonoBehaviour
         moveAction.performed += context => MoveInput = context.ReadValue<Vector2>();
         moveAction.canceled += context => MoveInput = Vector2.zero;
 
-        touchPosAction.started += context => TouchPosInput = context.ReadValue<Vector2>();
         touchPosAction.performed += context => TouchPosCurr = context.ReadValue<Vector2>();
-        touchPosAction.canceled += context => TouchPosInput = Vector2.zero;
+        touchPosAction.canceled += context =>
+        {
+            TouchPosInput = Vector2.zero;
+            TouchPosCurr = Vector2.zero;
+        };
 
-        touchPressAction.performed += context => TouchPressInput = true;
+        touchPressAction.performed += context =>
+        {
+            TouchPressInput = true;
+            TouchPosInput = touchPosAction.ReadValue<Vector2>();
+        };
         touchPressAction.canceled += context => TouchPressInput = false;
+
+        jumpAction.performed += context => JumpInput = true;
+        jumpAction.canceled += context => JumpInput = false;
     }
     #endregion
 
@@ -74,6 +94,7 @@ public class InputManager : MonoBehaviour
         moveAction.Enable();
         touchPosAction.Enable();
         touchPressAction.Enable();
+        jumpAction.Enable();
     }
 
     private void OnDisable()
@@ -81,6 +102,7 @@ public class InputManager : MonoBehaviour
         moveAction.Disable();
         touchPosAction.Disable();
         touchPressAction.Disable();
+        jumpAction.Disable();
     }
     #endregion
 
