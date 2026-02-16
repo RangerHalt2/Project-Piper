@@ -187,6 +187,17 @@
                 },
                 {
                     "name": "",
+                    "id": "5535d44c-5ea1-4069-b1fd-4c10c0baaf60",
+                    "path": "<Mouse>/leftButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Touch Press",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
                     "id": "5cc06420-dec3-4ef3-9814-01a80ee1af04",
                     "path": "<Keyboard>/space",
                     "interactions": "",

@@ -1,0 +1,30 @@
+{
+	"lines": [
+		{
+			"speakerName": "Test A",
+			"sentence": "A semi-long ish line for text testing purposes to view the print statement and see if it's working",
+			"choices": [],
+			"nextLineIndex": 1
+		},
+		{
+			"speakerName": "Test B",
+			"sentence": "The second semi-long ish line for text testing purposes to view the print statement and see if it's working, but with extra words",
+			"choices": [],
+			"nextLineIndex": 2
+		},
+		{
+			"speakerName": "Test C",
+			"sentence": "Huzzah and success!",
+			"choices": [
+				{
+					"choiceText": "Choice 1",
+					"nextLineIndex": -1
+				},
+				{
+					"choiceText": "Choice 2",
+					"nextLineIndex": -1
+				}
+			]
+		}
+	]
+}

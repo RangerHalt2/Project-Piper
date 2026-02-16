@@ -32,7 +32,7 @@ public class InputManager : MonoBehaviour
     public Vector2 MoveInput { get; private set; }
     public Vector2 TouchPosInput { get; private set; }
     public Vector2 TouchPosCurr { get; private set; }
-    public bool TouchPressInput { get; private set; }
+    public bool TouchPressInput { get; set; }
     public bool JumpInput { get; private set; }
 
     #endregion
