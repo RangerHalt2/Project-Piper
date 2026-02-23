@@ -27,6 +27,8 @@ public class DialogueManager : MonoBehaviour
 
     private InputManager input_manager;
 
+    [HideInInspector] public bool isManuallyContinuing = true;
+
     private void Start()
     {
         input_manager = GameObject.FindAnyObjectByType<InputManager>();
@@ -40,7 +42,7 @@ public class DialogueManager : MonoBehaviour
 
     private void Update()
     {
-        if(input_manager.TouchPressInput)
+        if(input_manager.TouchPressInput && isManuallyContinuing)
         {
             input_manager.TouchPressInput = false;
             DisplayNextSentence();
@@ -76,8 +78,9 @@ public class DialogueManager : MonoBehaviour
             panel.gameObject.SetActive(false);
         }
 
-        bool hasChoices = line.choices != null && line.choices.Length >0;
-        continue_button.gameObject.SetActive(!hasChoices);
+        bool hasChoices = line.choices != null && line.choices.Length > 0;
+        if(continue_button != null)
+            continue_button.gameObject.SetActive(!hasChoices);
 
         if (hasChoices)
         {
