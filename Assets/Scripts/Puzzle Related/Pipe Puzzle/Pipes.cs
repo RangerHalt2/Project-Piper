@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 public enum PipeType
 {
@@ -13,8 +13,8 @@ public class Pipes
     public PipeType type { get; private set; }
     public string tempRepresentation { get; private set; }
     public int rotations { get; set; } = 0;
-    public Vector2Int[] exits { get; private set; } // Exits stores an (X, Y) displacement integer, (0, 1) means go up 1 stay in the same column. This is inverted by i and j.
-                                                    // Num of Exits is the exits.Length() or exits.Count
+    public Vector2Int[] exits { get; private set; } // Num of Exits is the exits.Length() or exits.Count
+
 
     //Constructor, determines the base pipe information
     public Pipes()
@@ -65,7 +65,7 @@ public class Pipes
                 Debug.LogError("PIPES - The pipe template was not a valid matching enum or template");
                 break;
         }
-        rotations = Random.Range(0, 3); // chooses an 
+        rotations = Random.Range(0, 4);
         tempRepresentation += rotations.ToString();
         Debug.Log("PIPES - the pipe generated is: " + tempRepresentation);
     }
@@ -109,11 +109,11 @@ public class Pipes
         int new_y = old_y;
         for(int i = 0; i < rotations % 4; i++)
         {
-            Debug.Log("PIPES - current x/y " + new_x + "/" + new_y);
+            //Debug.Log("PIPES - current x/y " + new_x + "/" + new_y);
             int temp = new_x;
             new_x = new_y;
             new_y = -temp;
-            Debug.Log("PIPES - new x/y " + new_x + "/" + new_y);
+            //Debug.Log("PIPES - new x/y " + new_x + "/" + new_y);
         }
 
         ret.Set(new_x, new_y);

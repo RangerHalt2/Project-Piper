@@ -11,7 +11,7 @@ public class PipePuzzleManager : MonoBehaviour
     #endregion
 
     #region Non-Serial Variables
-    private Vector2Int startPoint; //The i/j for the start position, this should be offset by 1 to be outside of the strict limits. Same applies for the end points
+    private Vector2Int startPoint;
     private Vector2Int endPoint;
 
     private bool isVertical;
@@ -22,6 +22,17 @@ public class PipePuzzleManager : MonoBehaviour
 
     private void Start()
     {
+        string[,] miniGrid = new string[size, size];
+        for (int y = size - 1; y >= 0; y--) // print top row first
+        {
+            for (int x = 0; x < size; x++)
+            {
+                miniGrid[x, y] = "x/y: " + x + "/" + y;
+            }
+        }
+
+        PrintMiniGrid(miniGrid);
+
 
         InitializeGrid();
         InitializePuzzle();
@@ -35,13 +46,15 @@ public class PipePuzzleManager : MonoBehaviour
 
     private void InitializePuzzle()
     {
-        if (isVertical)
+        if (!isVertical)
         {
+            Debug.Log("PIPE PUZZLE MANAGER - Puzzle is Horizontal");
             startPoint = new Vector2Int(0 - 1, Random.Range(0, size));
             endPoint = new Vector2Int(size, Random.Range(0, size));
         }
         else
         {
+            Debug.Log("PIPE PUZZLE MANAGER - Puzzle is Vertical");
             startPoint = new Vector2Int(Random.Range(0, size), 0 - 1);
             endPoint = new Vector2Int(Random.Range(0, size), size);
         }
@@ -102,25 +115,45 @@ public class PipePuzzleManager : MonoBehaviour
 
     private void PrintGrid()
     {
-        string print = "";
+        System.Text.StringBuilder sb = new System.Text.StringBuilder();
 
-        for (int i = 0; i < size; i++)
+        for (int y = size - 1; y >= 0; y--) // print top row first
         {
-            for (int j = 0; j < size; j++)
+            for (int x = 0; x < size; x++)
             {
-                if (grid[i, j] != null)
-                    print += grid[i, j].CurrRepresentation() + "|";
+                if (grid[x, y] != null)
+                    sb.Append(grid[x, y].CurrRepresentation());
                 else
-                    print += " " + "|";
+                    sb.Append(" ? ");
+
+                sb.Append(" | ");
             }
-            print += "\n";
-            for (int j = 0; j < size; j++)
-            {
-                print += "-";
-            }
-            print += "\n";
+
+            sb.AppendLine();
+            sb.AppendLine(new string('-', size * 6));
         }
-        Debug.Log("PIPE PUZZLE MANAGER -  \n" + print);
+
+        Debug.Log("PIPE PUZZLE MANAGER -\n" + sb.ToString());
+    }
+
+    private void PrintMiniGrid(string[,] miniGrid)
+    {
+        System.Text.StringBuilder sb = new System.Text.StringBuilder();
+
+        for (int y = size - 1; y >= 0; y--) // print top row first
+        {
+            for (int x = 0; x < size; x++)
+            {
+                sb.Append(miniGrid[x, y]);
+
+                sb.Append(" | ");
+            }
+
+            sb.AppendLine();
+            sb.AppendLine(new string('-', size * 6));
+        }
+
+        Debug.Log("PIPE PUZZLE MANAGER -\n" + sb.ToString());
     }
 
     #region Puzzle Set Up
@@ -142,14 +175,14 @@ public class PipePuzzleManager : MonoBehaviour
         Vector2Int previousCoordinate = startPoint;
 
         int attempts = 0;
-        const int maxAttempts = 500;
+        const int maxAttempts = 100;
 
         bool done = false;
         do
         {
             do
             {
-                Debug.Log("PIPE PUZZLE MANAGER - Attempting to place a pipe at location: " + currentCoordinate.ToString());
+                //Debug.Log("PIPE PUZZLE MANAGER - Attempting to place a pipe at location: " + currentCoordinate.ToString());
                 grid[currentCoordinate.x, currentCoordinate.y] = new Pipes();
                 attempts++;
                 if (attempts > maxAttempts)
@@ -162,7 +195,7 @@ public class PipePuzzleManager : MonoBehaviour
                 break;
             else
                 attempts = 0;
-            Debug.Log("PIPE PUZZLE MANAGER - Successfully Placed a pipe at location: " + currentCoordinate.ToString());
+            //Debug.Log("PIPE PUZZLE MANAGER - Successfully Placed a pipe at location: " + currentCoordinate.ToString());
             if (currentCoordinate == endCoordinate)
             {
                 done = true;
@@ -173,17 +206,19 @@ public class PipePuzzleManager : MonoBehaviour
         } while (!done);
     }
 
+
+
     private void PopulateRemainingGrid()
     {
-        for (int i = 0; i < size; i++)
+        for (int y = 0; y < size; y++)
         {
-            for (int j = 0; j < size; j++)
+            for (int x = 0; x < size; x++)
             {
-                if (grid[i, j] == null)
+                if (grid[x, y] == null)
                 {
                     float chance = Random.Range(0.0f, 1.0f);
                     if (chance < 0.7f)
-                        grid[i, j] = new Pipes();
+                        grid[x, y] = new Pipes();
                 }
             }
         }
@@ -191,19 +226,22 @@ public class PipePuzzleManager : MonoBehaviour
 
     private void RandomlyRotateGrid()
     {
-        for (int i = 0; i < size; i++)
+        for (int y = 0; y < size; y++)
         {
-            for (int j = 0; j < size; j++)
+            for (int x = 0; x < size; x++)
             {
-                if (grid[i, j] != null)
+                if (grid[x, y] != null)
                 {
-                    int currentRotation = grid[i, j].rotations;
+                    int currentRotation = grid[x, y].rotations;
                     int randomRotation;
+
                     do
                     {
-                        randomRotation = Random.Range(0, 3);
-                    } while (randomRotation == currentRotation);
-                    grid[i, j].rotations = randomRotation;
+                        randomRotation = Random.Range(0, 4);
+                    }
+                    while (randomRotation == currentRotation);
+
+                    grid[x, y].rotations = randomRotation;
                 }
             }
         }
@@ -225,22 +263,22 @@ public class PipePuzzleManager : MonoBehaviour
         for (int i = 0; i < grid[currentCoordinate.x, currentCoordinate.y].exits.Length; i++)
         {   
             Vector2Int resultingCoordiante = currentCoordinate + grid[currentCoordinate.x, currentCoordinate.y].RotatedExit(i);
-            Debug.Log("PIPE PUZZLE MANAGER - resulting coordinates are: " + resultingCoordiante.ToString());
-            Debug.Log("PIPE PUZZLE MANAGER - necessary direction coordinates are: " + previousCoordinate.ToString());
+            //Debug.Log("PIPE PUZZLE MANAGER - resulting coordinates are: " + resultingCoordiante.ToString());
+            //Debug.Log("PIPE PUZZLE MANAGER - necessary direction coordinates are: " + previousCoordinate.ToString());
             if(resultingCoordiante == previousCoordinate)
             {
                 connectsToPrevious = true;
-                Debug.Log("PIPE PUZZLE MANAGER - the resulting pipe does connect to it's previous pipe");
+                //Debug.Log("PIPE PUZZLE MANAGER - the resulting pipe does connect to it's previous pipe");
             }
             else if(IsInGrid(resultingCoordiante) && IsEmptyGrid(resultingCoordiante))
             { //If this is true, the resulting coordinate should be inside the grid and NOT the previous coordinate.
                 connectsToValidGrid = true;
-                Debug.Log("PIPE PUZZLE MANAGER - the resulting pipe does connect to a valid grid spot!");
+                //Debug.Log("PIPE PUZZLE MANAGER - the resulting pipe does connect to a valid grid spot!");
             }
             else if(resultingCoordiante == endPoint)
             {
                 connectsToEndPoint = true;
-                Debug.Log("PIPE PUZZLE MANAGER - the resulting pipe does connect to the end of the puzzle");
+                //Debug.Log("PIPE PUZZLE MANAGER - the resulting pipe does connect to the end of the puzzle");
             }
         }
 
@@ -248,7 +286,7 @@ public class PipePuzzleManager : MonoBehaviour
             valid = connectsToPrevious && connectsToEndPoint;
         else
             valid = connectsToPrevious && connectsToValidGrid;
-        Debug.Log("PIPE PUZZLE MANAGER - the resulting pipes overall validation is: " + valid);
+        //Debug.Log("PIPE PUZZLE MANAGER - the resulting pipes overall validation is: " + valid);
         return valid;
     }
 
@@ -264,13 +302,13 @@ public class PipePuzzleManager : MonoBehaviour
             if(IsInGrid(resultingCoordiante) && IsEmptyGrid(resultingCoordiante))
             {
                 validSpots.Add(resultingCoordiante);
-                Debug.Log("PIPE PUZZLE MANAGER - Found a valid next spot, adding to the list: " + resultingCoordiante.ToString());
+                //Debug.Log("PIPE PUZZLE MANAGER - Found a valid next spot, adding to the list: " + resultingCoordiante.ToString());
             }
         }
 
         int randomIndex = Random.Range(0, validSpots.Count);
         ret = validSpots[randomIndex];
-        Debug.Log("PIPE PUZZLE MANAGER - Returning the next pipe spot: " + ret.ToString());
+        //Debug.Log("PIPE PUZZLE MANAGER - Returning the next pipe spot: " + ret.ToString());
         return ret;
     }
 
