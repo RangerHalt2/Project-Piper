@@ -70,6 +70,34 @@ public class Pipes
         Debug.Log("PIPES - the pipe generated is: " + tempRepresentation);
     }
 
+    public string CurrRepresentation()
+    {
+        string representation = "";
+        switch (type)
+        {
+            case PipeType.right_angle:
+                representation += "R";
+                break;
+            case PipeType.t_pipe:
+                representation += "T";
+                break;
+            case PipeType.straight:
+                representation += "S";
+                break;
+            case PipeType.cross:
+                representation += "+";
+                break;
+            default:
+                representation += "D";
+                Debug.LogError("PIPES - type is not a valid enum type");
+                break;
+        }
+
+        representation += rotations.ToString();
+
+        return representation;
+    }
+
     public Vector2Int RotatedExit(int exitIndex)
     {
         Vector2Int ret = new Vector2Int();

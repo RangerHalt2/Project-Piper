@@ -49,8 +49,81 @@ public class PipePuzzleManager : MonoBehaviour
         Debug.Log("PIPE PUZZLE MANAGER - Start Point Coordinate: " + startPoint.ToString() + "; End Point Coordinate: " + endPoint.ToString());
 
         PlaceSolution();
+        PrintGrid();
+        PopulateRemainingGrid();
+        while (CheckPuzzleIsSolved())
+        {
+            Debug.Log("PIPE PUZZLE MANAGER - The puzzle is solved!");
+            RandomlyRotateGrid();
+        }
+
+        PrintGrid();
     }
 
+    //This function will return true if the puzzle is in a solved state, and false otherwise
+    private bool CheckPuzzleIsSolved()
+    {
+        bool ret = false;
+
+        // Get the starting square to begin the solution to the puzzle
+        Vector2Int startingCoordinate = startPoint;
+        startingCoordinate.x = Mathf.Clamp(startingCoordinate.x, 0, size - 1);
+        startingCoordinate.y = Mathf.Clamp(startingCoordinate.y, 0, size - 1);
+
+        Vector2Int currentCoordinate = startingCoordinate;
+
+        ret = RecursiveNavigation(currentCoordinate, new HashSet<Vector2Int>());
+
+        return ret;
+    }
+
+    //Helper function to the CheckPuzzleIsSolved, recursively navigates through the grid confirming the pipe layout.
+    private bool RecursiveNavigation(Vector2Int coords, HashSet<Vector2Int> visited)
+    {
+        if (!IsInGrid(coords))
+            return coords == endPoint;
+        if (grid[coords.x, coords.y] == null)
+            return false;
+        if (visited.Contains(coords))
+            return false;
+
+        visited.Add(coords);
+
+        for (int i = 0; i < grid[coords.x, coords.y].exits.Length; i++)
+        {
+            Vector2Int next = coords + grid[coords.x, coords.y].RotatedExit(i);
+            if (RecursiveNavigation(next, visited))
+                return true;
+        }
+
+        visited.Remove(coords); // backtrack
+        return false;
+    }
+
+    private void PrintGrid()
+    {
+        string print = "";
+
+        for (int i = 0; i < size; i++)
+        {
+            for (int j = 0; j < size; j++)
+            {
+                if (grid[i, j] != null)
+                    print += grid[i, j].CurrRepresentation() + "|";
+                else
+                    print += " " + "|";
+            }
+            print += "\n";
+            for (int j = 0; j < size; j++)
+            {
+                print += "-";
+            }
+            print += "\n";
+        }
+        Debug.Log("PIPE PUZZLE MANAGER -  \n" + print);
+    }
+
+    #region Puzzle Set Up
     //This function ensures that there is a valid way to solve the puzzle.
     private void PlaceSolution()
     {
@@ -69,7 +142,7 @@ public class PipePuzzleManager : MonoBehaviour
         Vector2Int previousCoordinate = startPoint;
 
         int attempts = 0;
-        const int maxAttempts = 50;
+        const int maxAttempts = 500;
 
         bool done = false;
         do
@@ -98,28 +171,44 @@ public class PipePuzzleManager : MonoBehaviour
             previousCoordinate = currentCoordinate;
             currentCoordinate = GenerateNextPipePlacement(currentCoordinate);
         } while (!done);
+    }
 
-        string print = "";
+    private void PopulateRemainingGrid()
+    {
+        for (int i = 0; i < size; i++)
+        {
+            for (int j = 0; j < size; j++)
+            {
+                if (grid[i, j] == null)
+                {
+                    float chance = Random.Range(0.0f, 1.0f);
+                    if (chance < 0.7f)
+                        grid[i, j] = new Pipes();
+                }
+            }
+        }
+    }
 
+    private void RandomlyRotateGrid()
+    {
         for (int i = 0; i < size; i++)
         {
             for (int j = 0; j < size; j++)
             {
                 if (grid[i, j] != null)
-                    print += grid[i, j].tempRepresentation + "|";
-                else
-                    print += " " + "|";
+                {
+                    int currentRotation = grid[i, j].rotations;
+                    int randomRotation;
+                    do
+                    {
+                        randomRotation = Random.Range(0, 3);
+                    } while (randomRotation == currentRotation);
+                    grid[i, j].rotations = randomRotation;
+                }
             }
-            print += "\n";
-            for(int j = 0; j < size; j++)
-            {
-                print += "-";
-            }
-            print += "\n";
         }
-        Debug.Log("PIPES \n" + print);
-
     }
+    #endregion
 
     #region Pipe Placement Validation
     private bool ValidPipePlacement(Vector2Int currentCoordinate, Vector2Int previousCoordinate)
