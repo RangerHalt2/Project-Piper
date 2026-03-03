@@ -5,7 +5,8 @@ public enum PipeType
     right_angle,
     t_pipe,
     straight,
-    cross
+    cross,
+    empty
 }
 
 public class Pipes

@@ -5,22 +5,22 @@ public class PipePuzzleManager : MonoBehaviour
 {
     #region Serial Variables
     [Tooltip("How big the grid is; size = 3 then there will be 9 spaces as a 3x3 grid")]
-    [SerializeField] private int size;
+    public int size;
     [Tooltip("There is no implementation as of this current moment for a custom puzzle, leave this false")]
     [SerializeField] private bool isCustomPuzzle = false; //Default Assumption is the puzzle is computer generated
     #endregion
 
     #region Non-Serial Variables
-    private Vector2Int startPoint;
-    private Vector2Int endPoint;
+    [HideInInspector] public Vector2Int startPoint;
+    [HideInInspector] public Vector2Int endPoint;
 
-    private bool isVertical;
+    [HideInInspector] public bool isVertical;
 
-    private Pipes[,] grid;
+    [HideInInspector] public Pipes[,] grid;
     #endregion
 
 
-    private void Start()
+    private void Awake()
     {
         string[,] miniGrid = new string[size, size];
         for (int y = size - 1; y >= 0; y--) // print top row first
@@ -74,7 +74,7 @@ public class PipePuzzleManager : MonoBehaviour
     }
 
     //This function will return true if the puzzle is in a solved state, and false otherwise
-    private bool CheckPuzzleIsSolved()
+    public bool CheckPuzzleIsSolved()
     {
         bool ret = false;
 

@@ -50,6 +50,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": true
+                },
+                {
+                    "name": "Pause",
+                    "type": "Button",
+                    "id": "1a211817-ec90-44cf-bda6-86032f35a1e6",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -176,6 +185,17 @@
                 },
                 {
                     "name": "",
+                    "id": "0b6861c0-fcac-4b52-b205-11f3dcd6e084",
+                    "path": "<Mouse>/position",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Touch Position",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
                     "id": "f360d393-0fa5-48d0-9221-c173f66755e0",
                     "path": "<Touchscreen>/Press",
                     "interactions": "",
@@ -215,6 +235,17 @@
                     "processors": "",
                     "groups": "",
                     "action": "Swipe Up",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "d08a4c38-b8c8-406c-be88-93bc1d0af6d5",
+                    "path": "<Keyboard>/escape",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Pause",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
