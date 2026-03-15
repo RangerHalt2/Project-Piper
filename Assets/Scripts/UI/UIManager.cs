@@ -1,4 +1,5 @@
 // Created By: Ryan Lupoli
+// Iterated By: Kyle Woo
 // Manages the UI during gameplay and allows for easy navigation between pages
 using System.Collections.Generic;
 using UnityEngine;
@@ -15,6 +16,8 @@ public class UIManager : MonoBehaviour
     public int currentPage = 0;
     [Tooltip("The index of the page the UI should start on when the UI Manager starts up.")]
     public int defaultPage = 0;
+    [Tooltip("If enabled, each page controls whether pause input is allowed while that page is active.")]
+    public bool usePagePauseRules = true;
 
     [Header("Pause Settings")]
     [Tooltip("Reference to InputActions Asset.")]
@@ -114,12 +117,26 @@ public class UIManager : MonoBehaviour
     public void GoToPage(int pageIndex)
     {
         // If the page index is within the bounds of pages, and a page has been assigned at that index
-        if (pageIndex < pages.Count && pages[pageIndex] != null)
+        if (pages != null && pageIndex >= 0 && pageIndex < pages.Count && pages[pageIndex] != null)
         {
             // Disable all pages
             SetActiveAllPages(false);
             // Activate the specified page
             pages[pageIndex].gameObject.SetActive(true);
+            currentPage = pageIndex;
+
+            if (usePagePauseRules)
+            {
+                allowPause = pages[pageIndex].AllowPauseOnThisPage;
+            }
+
+            // If we navigated to a non-pausable page while paused, force a clean resume.
+            if (isPaused && !allowPause)
+            {
+                isPaused = false;
+                Time.timeScale = 1f;
+                Cursor.lockState = CursorLockMode.None;
+            }
         }
     }
 
