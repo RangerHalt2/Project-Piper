@@ -31,7 +31,7 @@ public class PipePuzzleManager : MonoBehaviour
             }
         }
 
-        PrintMiniGrid(miniGrid);
+        //PrintMiniGrid(miniGrid);
 
 
         InitializeGrid();

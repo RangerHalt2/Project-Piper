@@ -59,6 +59,15 @@ public class PlayerController : MonoBehaviour
             rb.linearVelocity = new Vector2(normalDis.x * moveSpeed, rb.linearVelocity.y);
         }
 
+        if(rb.linearVelocity.x > 0f)
+        {
+            transform.rotation = Quaternion.Euler(0, 0, 0);
+        }
+        else if(rb.linearVelocity.x < 0f)
+        {
+            transform.rotation = Quaternion.Euler(0, 180, 0);
+        }
+
     }
 
     private void HandleJump()
