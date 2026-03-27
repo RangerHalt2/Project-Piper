@@ -1,30 +1,78 @@
+using System.Collections.Generic;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 //This code will speak to all PipeListeners and read instructions from the pipepuzzlemanager.
-public class PipeSpeaker : MonoBehaviour
+public class PipeSpeaker : MonoBehaviour, IInteractable
 {
     [SerializeField] private Transform puzzleSpawn;
     [SerializeField] private float displacement;
     [SerializeField] private GameObject PipePrefab;
     [SerializeField] private GameObject PipeEnds;
     [SerializeField] private Sprite[] startEndSprites;
+    [SerializeField] private Canvas puzzleCanvas;
 
     [SerializeField] private TextMeshProUGUI winText;
+
+    private List<GameObject> spawnedPipes = new List<GameObject>();
+
+    private bool PuzzleSpawned = false;
+    private bool PuzzleVisible = false;
 
     private InputManager inputManager;
 
     private int size;
     private PipePuzzleManager manager;
+
+    public bool canInteract { get; set; } = true;
+
+    //Initalize all required components
     private void Start()
     {
-        Debug.Log("PIPE SPEAKER - The process of spawning the pipes is starting");
         inputManager = GameObject.FindAnyObjectByType<InputManager>();
         manager = GetComponent<PipePuzzleManager>();
+        manager = GameObject.FindAnyObjectByType<PipePuzzleManager>();
         size = manager.size;
+        
+    }
+
+    //Manages the interaction when the player walks up and presses E
+    public void Interact()
+    {
+        if(!canInteract) return;
+        if(!PuzzleSpawned) SpawnPuzzle();
+        if(PuzzleSpawned) ToggleVisibility();
+    }
+
+    private void SpawnPuzzle()
+    {
+        manager.GenerateNewPuzzle();
+        PuzzleSpawned = true;
         SpawnEnds();
         SpawnListeners();
+    }
+
+    private void ToggleVisibility()
+    {
+        if (!PuzzleVisible)
+        {
+            foreach (GameObject go in spawnedPipes)
+            {
+                go.SetActive(true);
+                puzzleCanvas.gameObject.SetActive(true);
+            }
+        }
+        else
+        {
+            foreach (GameObject go in spawnedPipes)
+            {
+                go.SetActive(false);
+                puzzleCanvas.gameObject.SetActive(false);
+            }
+        }
+        PuzzleVisible = !PuzzleVisible;
     }
 
     private void SpawnEnds()
@@ -54,6 +102,8 @@ public class PipeSpeaker : MonoBehaviour
             EndPipe.transform.rotation = Quaternion.Euler(0, 0, 90);
         }
 
+        spawnedPipes.Add(StartPipe);
+        spawnedPipes.Add(EndPipe);
     }
 
     private void SpawnListeners()
@@ -79,6 +129,7 @@ public class PipeSpeaker : MonoBehaviour
                 listener.thisPipe = currentPipe;
                 listener.UpdateRotation();
                 listener.SetSprite(currentPipe.type);
+                spawnedPipes.Add(pipe);
             }
         }
 
@@ -92,6 +143,7 @@ public class PipeSpeaker : MonoBehaviour
             if (isWon)
             {
                 winText.text = "Game Is Won";
+                canInteract = false;
             }
             else
                 winText.text = "Game Is Not Won";
