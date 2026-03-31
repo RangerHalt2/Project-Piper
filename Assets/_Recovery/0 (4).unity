@@ -682,8 +682,8 @@ Camera:
   near clip plane: 0.3
   far clip plane: 10000
   field of view: 60
-  orthographic: 1
-  orthographic size: 50
+  orthographic: 0
+  orthographic size: 5
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -1388,7 +1388,7 @@ Transform:
   m_GameObject: {fileID: 556154748}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 30.5, y: 61.6, z: -5.01}
+  m_LocalPosition: {x: -21.7, y: 61.6, z: -5.01}
   m_LocalScale: {x: 3, y: 3, z: 3}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -1521,7 +1521,6 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 02ebc6a7fe7c6414d979a029f1c94b95, type: 3}
   puzzleCanvas: {fileID: 114091708}
   winText: {fileID: 1045200075}
-  winSprite: {fileID: 21300000, guid: 1fca61e4e3b17554183a327fb80da023, type: 3}
 --- !u!114 &556154753
 MonoBehaviour:
   m_ObjectHideFlags: 0

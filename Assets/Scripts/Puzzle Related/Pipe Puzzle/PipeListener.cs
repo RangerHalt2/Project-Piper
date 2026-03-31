@@ -12,7 +12,6 @@ public class PipeListener : MonoBehaviour
     [SerializeField] private Sprite[] Sprite;
     [SerializeField] private SpriteRenderer spriteRenderer;
 
-
     public void SetSprite(PipeType pipeSprite)
     {
         spriteRenderer.sprite = Sprite[((int)pipeSprite)];

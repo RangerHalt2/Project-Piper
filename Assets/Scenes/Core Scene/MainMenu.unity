@@ -495,6 +495,7 @@ GameObject:
   - component: {fileID: 291366653}
   - component: {fileID: 291366652}
   - component: {fileID: 291366654}
+  - component: {fileID: 291366655}
   m_Layer: 0
   m_Name: UIManager
   m_TagString: Untagged
@@ -606,6 +607,19 @@ MonoBehaviour:
   disableBuiltInButtonTransition: 1
   fadeDuration: 0.1
   useUnscaledTime: 1
+--- !u!114 &291366655
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 291366651}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b1286bd9d0a67694ab086a789c9475e5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SceneController
+  MainMenu: 
 --- !u!1 &340196073
 GameObject:
   m_ObjectHideFlags: 0
@@ -1169,7 +1183,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1979181322}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 291366655}
+        m_TargetAssemblyTypeName: SceneController, Assembly-CSharp
+        m_MethodName: GoToScene
+        m_Mode: 5
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: RoseGarden
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &649078149
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1534,7 +1560,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -12398,7 +12424,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:

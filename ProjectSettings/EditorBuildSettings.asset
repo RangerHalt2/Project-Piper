@@ -8,6 +8,36 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/TestScenes/SampleScene.unity
     guid: 99c9720ab356a0642a771bea13969a05
+  - enabled: 1
+    path: Assets/Scenes/Core Scene/Armory.unity
+    guid: fdcb1bf80c88eb748b578a63ed5b671c
+  - enabled: 1
+    path: Assets/Scenes/Core Scene/BoilerRoom.unity
+    guid: e747e95e8935a88408333529844bcd97
+  - enabled: 1
+    path: Assets/Scenes/Core Scene/Cliff.unity
+    guid: 86f89de364841d348b70bd9053aad3a0
+  - enabled: 1
+    path: Assets/Scenes/Core Scene/EngineeringRoom.unity
+    guid: 1e16141645890e64e9eff560e2307fba
+  - enabled: 1
+    path: Assets/Scenes/Core Scene/GatheringHall.unity
+    guid: cf930ab9b7e694a438f9f8be0c982f7c
+  - enabled: 1
+    path: Assets/Scenes/Core Scene/GiantClockRoom.unity
+    guid: 6d4e8c20d37c0404ea8267661c029ae4
+  - enabled: 1
+    path: Assets/Scenes/Core Scene/MainHallways.unity
+    guid: 00603ca14ac647d40869894b16f3a437
+  - enabled: 1
+    path: Assets/Scenes/Core Scene/MainMenu.unity
+    guid: b6e996b8c36e379448df501640d36429
+  - enabled: 1
+    path: Assets/Scenes/Core Scene/PrincessRoom.unity
+    guid: 31e07b0a40fa91147891091625f3258a
+  - enabled: 1
+    path: Assets/Scenes/Core Scene/RoseGarden.unity
+    guid: e780ef6b492f57249b014fa7e9ebf6c0
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   m_UseUCBPForAssetBundles: 0

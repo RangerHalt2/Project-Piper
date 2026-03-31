@@ -16,6 +16,8 @@ public class PipeSpeaker : MonoBehaviour, IInteractable
 
     [SerializeField] private TextMeshProUGUI winText;
 
+    [SerializeField] private Sprite winSprite;
+
     private List<GameObject> spawnedPipes = new List<GameObject>();
 
     private bool PuzzleSpawned = false;
@@ -26,6 +28,8 @@ public class PipeSpeaker : MonoBehaviour, IInteractable
     private int size;
     private PipePuzzleManager manager;
 
+    private SpriteRenderer spriteRenderer;
+
     public bool canInteract { get; set; } = true;
 
     //Initalize all required components
@@ -35,7 +39,7 @@ public class PipeSpeaker : MonoBehaviour, IInteractable
         manager = GetComponent<PipePuzzleManager>();
         manager = GameObject.FindAnyObjectByType<PipePuzzleManager>();
         size = manager.size;
-        
+        spriteRenderer = GetComponent<SpriteRenderer>();
     }
 
     //Manages the interaction when the player walks up and presses E
@@ -123,6 +127,7 @@ public class PipeSpeaker : MonoBehaviour, IInteractable
                 {
                     Debug.Log("PIPE SPEAKER - there is no pipe at x/y: " + x + "/" + y);
                     listener.SetSprite(PipeType.empty);
+                    spawnedPipes.Add(pipe);
                     continue;
                 }
                 Pipes currentPipe = manager.grid[x, y];
@@ -143,7 +148,9 @@ public class PipeSpeaker : MonoBehaviour, IInteractable
             if (isWon)
             {
                 winText.text = "Game Is Won";
+                ToggleVisibility();
                 canInteract = false;
+                spriteRenderer.sprite = winSprite;
             }
             else
                 winText.text = "Game Is Not Won";
