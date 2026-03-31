@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class PipePuzzleManager : MonoBehaviour
@@ -17,6 +18,9 @@ public class PipePuzzleManager : MonoBehaviour
     [HideInInspector] public bool isVertical;
 
     [HideInInspector] public Pipes[,] grid;
+
+
+    private List<Pipes> possiblePipes = new List<Pipes>();
     #endregion
 
 
@@ -40,6 +44,7 @@ public class PipePuzzleManager : MonoBehaviour
 
     public void GenerateNewPuzzle()
     {
+        GeneratePossiblePipes();
         InitializeGrid();
         InitializePuzzle();
     }
@@ -70,11 +75,17 @@ public class PipePuzzleManager : MonoBehaviour
         PlaceSolution();
         PrintGrid();
         PopulateRemainingGrid();
+        int maxAttempts = 100;
+        int attempts = 0;
         while (CheckPuzzleIsSolved())
         {
-            Debug.Log("PIPE PUZZLE MANAGER - The puzzle is solved!");
+            if (attempts >= maxAttempts) break;
+            //Debug.Log("PIPE PUZZLE MANAGER - The puzzle is solved!");
             RandomlyRotateGrid();
+            attempts++;
         }
+
+        Debug.Log("PIPE PUZZLE MANAGER - Attempts used was: " + attempts);
 
         PrintGrid();
     }
@@ -180,39 +191,49 @@ public class PipePuzzleManager : MonoBehaviour
         Vector2Int currentCoordinate = startingCoordinate;
         Vector2Int previousCoordinate = startPoint;
 
-        int attempts = 0;
-        const int maxAttempts = 1000;
-
-        bool done = false;
-        do
-        {
-            do
-            {
-                //Debug.Log("PIPE PUZZLE MANAGER - Attempting to place a pipe at location: " + currentCoordinate.ToString());
-                grid[currentCoordinate.x, currentCoordinate.y] = new Pipes();
-                attempts++;
-                if (attempts >= maxAttempts)
-                {
-                    Debug.LogError("PIPE PUZZLE MANAGER - Failed to place valid pipe. Aborting.");
-                    break;
-                }
-            } while (!ValidPipePlacement(currentCoordinate, previousCoordinate));
-            if (attempts >= maxAttempts)
-                break;
-            else
-                attempts = 0;
-            //Debug.Log("PIPE PUZZLE MANAGER - Successfully Placed a pipe at location: " + currentCoordinate.ToString());
-            if (currentCoordinate == endCoordinate)
-            {
-                done = true;
-                break;
-            }
-            previousCoordinate = currentCoordinate;
-            currentCoordinate = GenerateNextPipePlacement(currentCoordinate);
-        } while (!done);
+        bool done = RecursivePlaceSolution(currentCoordinate, previousCoordinate);
     }
 
+    // Recursive Place Solution will attempt to place a pipe at the current coordinates, and check with the previous coordinate to ensure they're matching.
+    // For this, the recursive placement needs to check and validate each valid pipe placement. There are 4 pipes with 4 rotations each for a total of 16?
+    private bool RecursivePlaceSolution(Vector2Int currentCoordinate, Vector2Int previousCoordinates)
+    {
+        if (currentCoordinate == endPoint) return true; // Base Case, if the puzzle is completed return true.
+        if (!IsInGrid(currentCoordinate) || !IsEmptyGrid(currentCoordinate)) return false;
 
+        List<Pipes> validPlacements = new List<Pipes>();
+        foreach (Pipes pipe in possiblePipes)
+        {
+            grid[currentCoordinate.x, currentCoordinate.y] = new Pipes(pipe.type, pipe.rotations);
+            if (ValidPipePlacement(currentCoordinate, previousCoordinates))
+            {
+                validPlacements.Add(grid[currentCoordinate.x, currentCoordinate.y]);
+            }
+            grid[currentCoordinate.x, currentCoordinate.y] = null;
+        }
+
+        // At this point in the code you've collected all the possible valid placements of pipes, this includes pipes that touch the ends or empty grid spaces
+
+        while(validPlacements.Count > 0)
+        {
+            int random = Random.Range(0, validPlacements.Count);
+            Pipes pipe = validPlacements[random];
+            grid[currentCoordinate.x, currentCoordinate.y] = pipe;
+
+            bool done = false;
+            //Loop through all the possible pipe exits?
+            for(int i = 0; i < grid[currentCoordinate.x, currentCoordinate.y].exits.Length; i++)
+            {
+                Vector2Int resultingCoordiante = currentCoordinate + grid[currentCoordinate.x, currentCoordinate.y].RotatedExit(i);
+                done = RecursivePlaceSolution(resultingCoordiante, currentCoordinate);
+                if (done) return done;
+            }
+            grid[currentCoordinate.x, currentCoordinate.y] = null;
+            validPlacements.Remove(pipe);
+        }
+
+        return false; // If it reaches this point, there were no valid pipe placements
+    }
 
     private void PopulateRemainingGrid()
     {
@@ -255,6 +276,38 @@ public class PipePuzzleManager : MonoBehaviour
     #endregion
 
     #region Pipe Placement Validation
+    // Refactor and place possible pipes here, no need to remake them.
+    private void GeneratePossiblePipes()
+    {
+        for (int i = 0; i < 4; i++)
+        {
+            for (int j = 0; j < 4; j++)
+            {
+                switch (i)
+                {
+                    case 0:
+                        possiblePipes.Add(new Pipes(PipeType.right_angle, j));
+                        break;
+
+                    case 1:
+                        possiblePipes.Add(new Pipes(PipeType.cross, j));
+                        break;
+
+                    case 2:
+                        possiblePipes.Add(new Pipes(PipeType.t_pipe, j));
+                        break;
+
+                    case 3:
+                        possiblePipes.Add(new Pipes(PipeType.straight, j));
+                        break;
+                    default:
+                        //Debug.LogError("PIPE PUZZLE MANAGER - Impossible value of i was passed in");
+                        return;
+                }
+            }
+        } // End of generating all possible pipes
+    }
+
     private bool ValidPipePlacement(Vector2Int currentCoordinate, Vector2Int previousCoordinate)
     {
         bool valid = false;
@@ -294,28 +347,6 @@ public class PipePuzzleManager : MonoBehaviour
             valid = connectsToPrevious && connectsToValidGrid;
         //Debug.Log("PIPE PUZZLE MANAGER - the resulting pipes overall validation is: " + valid);
         return valid;
-    }
-
-    //Returns a coordinate for the next pipe to be placed.
-    private Vector2Int GenerateNextPipePlacement(Vector2Int currentCoordinate)
-    {
-        Vector2Int ret = new Vector2Int();
-
-        List<Vector2Int> validSpots = new List<Vector2Int>();
-        for(int i = 0; i < grid[currentCoordinate.x, currentCoordinate.y].exits.Length; i++)
-        {
-            Vector2Int resultingCoordiante = currentCoordinate + grid[currentCoordinate.x, currentCoordinate.y].RotatedExit(i);
-            if(IsInGrid(resultingCoordiante) && IsEmptyGrid(resultingCoordiante))
-            {
-                validSpots.Add(resultingCoordiante);
-                //Debug.Log("PIPE PUZZLE MANAGER - Found a valid next spot, adding to the list: " + resultingCoordiante.ToString());
-            }
-        }
-
-        int randomIndex = Random.Range(0, validSpots.Count);
-        ret = validSpots[randomIndex];
-        //Debug.Log("PIPE PUZZLE MANAGER - Returning the next pipe spot: " + ret.ToString());
-        return ret;
     }
 
     private bool IsInGrid(Vector2Int coord)

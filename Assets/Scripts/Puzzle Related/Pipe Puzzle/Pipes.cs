@@ -21,7 +21,23 @@ public class Pipes
     public Pipes()
     {
         PipeType pipe_template = (PipeType)Random.Range(0, 4); //Generates 0-3
-        switch (pipe_template)
+        SetPipeInfo(pipe_template);
+        rotations = Random.Range(0, 4);
+        tempRepresentation += rotations.ToString();
+        Debug.Log("PIPES - the pipe generated is: " + tempRepresentation);
+    }
+
+    //LB: note for self, throw the switch() statement in it's own function and have both constructors call both.
+    public Pipes(PipeType pipeType, int rotation)
+    {
+        this.type = pipeType;
+        this.rotations = rotation;
+        SetPipeInfo(pipeType);
+    }
+
+    private void SetPipeInfo(PipeType type)
+    {
+        switch (type)
         {
             case PipeType.right_angle:
                 type = PipeType.right_angle;
@@ -66,11 +82,7 @@ public class Pipes
                 Debug.LogError("PIPES - The pipe template was not a valid matching enum or template");
                 break;
         }
-        rotations = Random.Range(0, 4);
-        tempRepresentation += rotations.ToString();
-        Debug.Log("PIPES - the pipe generated is: " + tempRepresentation);
     }
-
     public string CurrRepresentation()
     {
         string representation = "";
