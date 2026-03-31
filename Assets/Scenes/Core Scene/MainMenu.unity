@@ -619,7 +619,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b1286bd9d0a67694ab086a789c9475e5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SceneController
-  MainMenu: 
+  SceneName: 
 --- !u!1 &340196073
 GameObject:
   m_ObjectHideFlags: 0
@@ -1635,7 +1635,7 @@ CanvasGroup:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 812534367}
   m_Enabled: 1
-  m_Alpha: 1
+  m_Alpha: 0
   m_Interactable: 1
   m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 0
