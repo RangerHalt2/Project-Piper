@@ -5,7 +5,7 @@ using UnityEngine.SceneManagement;
 public class SceneController : MonoBehaviour
 {
     //Dynamic Scene Naming capabilities
-    [SerializeField] private string MainMenu = "";
+    [SerializeField] private string SceneName = "";
 
     void Start()
     {
@@ -25,7 +25,7 @@ public class SceneController : MonoBehaviour
 
     public void GoToMainMenu()
     {
-        SceneManager.LoadScene(MainMenu);
+        SceneManager.LoadScene(SceneName);
     }
 
 }
