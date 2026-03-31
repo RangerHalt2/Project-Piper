@@ -50,6 +50,9 @@ TagManager:
   - name: Foreground
     uniqueID: 2189988293
     locked: 0
+  - name: Puzzle
+    uniqueID: 598388495
+    locked: 0
   m_RenderingLayers:
   - Default
   - Light Layer 1
