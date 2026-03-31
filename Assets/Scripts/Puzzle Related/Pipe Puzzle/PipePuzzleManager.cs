@@ -191,13 +191,13 @@ public class PipePuzzleManager : MonoBehaviour
                 //Debug.Log("PIPE PUZZLE MANAGER - Attempting to place a pipe at location: " + currentCoordinate.ToString());
                 grid[currentCoordinate.x, currentCoordinate.y] = new Pipes();
                 attempts++;
-                if (attempts > maxAttempts)
+                if (attempts >= maxAttempts)
                 {
                     Debug.LogError("PIPE PUZZLE MANAGER - Failed to place valid pipe. Aborting.");
                     break;
                 }
             } while (!ValidPipePlacement(currentCoordinate, previousCoordinate));
-            if (attempts > maxAttempts)
+            if (attempts >= maxAttempts)
                 break;
             else
                 attempts = 0;

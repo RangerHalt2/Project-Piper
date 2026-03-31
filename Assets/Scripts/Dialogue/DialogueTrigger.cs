@@ -6,9 +6,9 @@ public class DialogueTrigger : MonoBehaviour
     [SerializeField] private TextAsset dialogueJSON;
     [SerializeField] private bool isDialogueOnStart = true;
     [SerializeField] private bool isManuallyContinuing = true;
-
     private DialogueManager manager;
     private Dialogue dialog;
+
 
     private void Start()
     {
@@ -17,6 +17,15 @@ public class DialogueTrigger : MonoBehaviour
         dialog = manager.LoadDialogueFromJSON(dialogueJSON);
         if(isDialogueOnStart)
             manager.StartDialogue(dialog);
+    }
+
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (manager != null)
+        {
+            manager.StartDialogue(dialog);
+        }
     }
 
     public void StartDialogue()
