@@ -17,14 +17,14 @@ public class InputManager : MonoBehaviour
     [SerializeField] private string touchPos = "Touch Position";
     [SerializeField] private string touchPress = "Touch Press";
     [SerializeField] private string jump = "Jump";
-    [SerializeField] private string upSwipe = "Swipe Up";
+    [SerializeField] private string Interact = "Interact";
 
     //This is an action input, each one needs one assigned
     private InputAction moveAction;
     private InputAction touchPosAction;
     private InputAction touchPressAction;
     private InputAction jumpAction;
-    private InputAction upSwipeAction;
+    private InputAction interactAction;
 
     #endregion
 
@@ -34,6 +34,8 @@ public class InputManager : MonoBehaviour
     public Vector2 TouchPosCurr { get; private set; }
     public bool TouchPressInput { get; set; }
     public bool JumpInput { get; private set; }
+    public bool InteractInput { get; set; }
+
 
     #endregion
 
@@ -59,7 +61,7 @@ public class InputManager : MonoBehaviour
         touchPosAction = map.FindAction(touchPos);
         touchPressAction = map.FindAction(touchPress);
         jumpAction = map.FindAction(jump);
-        upSwipeAction = map.FindAction(upSwipe);
+        interactAction = map.FindAction(Interact);
         RegisterInputActions();
     }
 
@@ -84,6 +86,9 @@ public class InputManager : MonoBehaviour
 
         jumpAction.performed += context => JumpInput = true;
         jumpAction.canceled += context => JumpInput = false;
+
+        interactAction.performed += context => InteractInput = true;
+        interactAction.canceled += context => InteractInput = false;
     }
     #endregion
 
@@ -95,6 +100,7 @@ public class InputManager : MonoBehaviour
         touchPosAction.Enable();
         touchPressAction.Enable();
         jumpAction.Enable();
+        interactAction.Enable();
     }
 
     private void OnDisable()
@@ -103,6 +109,7 @@ public class InputManager : MonoBehaviour
         touchPosAction.Disable();
         touchPressAction.Disable();
         jumpAction.Disable();
+        interactAction.Disable();
     }
     #endregion
 

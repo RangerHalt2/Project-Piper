@@ -34,6 +34,12 @@ public class PipePuzzleManager : MonoBehaviour
         //PrintMiniGrid(miniGrid);
 
 
+        //InitializeGrid();
+        //InitializePuzzle();
+    }
+
+    public void GenerateNewPuzzle()
+    {
         InitializeGrid();
         InitializePuzzle();
     }
@@ -175,7 +181,7 @@ public class PipePuzzleManager : MonoBehaviour
         Vector2Int previousCoordinate = startPoint;
 
         int attempts = 0;
-        const int maxAttempts = 100;
+        const int maxAttempts = 1000;
 
         bool done = false;
         do

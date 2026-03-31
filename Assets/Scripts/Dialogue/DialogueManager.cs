@@ -20,6 +20,8 @@ public class DialogueManager : MonoBehaviour
 
     private Button[] choice_buttons;
 
+    private bool isActive = true;
+
     private Dialogue currentDialogue;
     private int currentLineIndex = 0;
     private bool isTyping = false;
@@ -45,7 +47,8 @@ public class DialogueManager : MonoBehaviour
         if(input_manager.TouchPressInput && isManuallyContinuing)
         {
             input_manager.TouchPressInput = false;
-            DisplayNextSentence();
+            if(isActive)
+                DisplayNextSentence();
         }
     }
 
@@ -183,6 +186,8 @@ public class DialogueManager : MonoBehaviour
     private void EndDialogue()
     {
         Debug.Log("DIALOGUE MANAGER - ending the dialogue");
+        dialogue_canvas.gameObject.SetActive(false);
+        isActive = false;
         return;
     }
 

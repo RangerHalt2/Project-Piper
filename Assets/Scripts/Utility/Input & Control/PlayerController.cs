@@ -7,6 +7,8 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float jumpForce = 5f;
     [SerializeField] private LayerMask whatIsGround;
     [SerializeField] private Transform groundCheck;
+    [SerializeField] private float interactionRadius = 3f;
+    [SerializeField] private float heightDisplacement = 15f;
     private float deadzone = 20f;
     private float groundRadius = 0.2f;
 
@@ -28,6 +30,7 @@ public class PlayerController : MonoBehaviour
     {
         HandleJump();
         HandleMovement();
+        Interact();
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
@@ -103,6 +106,36 @@ public class PlayerController : MonoBehaviour
         {
             isGrounded = true;
         }
+    }
+
+    private void Interact()
+    {
+        if (inputManager.InteractInput)
+        {
+            Debug.Log("PLAYER CONTROLLER - Interact Key Pressed!");
+            inputManager.InteractInput = false;
+
+            Vector2 interactOrigin = (Vector2)transform.position + Vector2.up * heightDisplacement;
+            Collider2D[] cols = Physics2D.OverlapCircleAll(interactOrigin, interactionRadius);
+            foreach (Collider2D col in cols)
+            {
+                //Check if the object has an inherited of IInteractable and then null check it and run the Interact() function.
+                IInteractable interactable = col.GetComponent<IInteractable>();
+                if(interactable != null)
+                {
+                    Debug.Log("PLAYER CONTROLLER - Interactable is not null, calling the function now");
+                    interactable.Interact();
+                }
+            }
+
+        }
+    }
+
+    private void OnDrawGizmosSelected()
+    {
+        Gizmos.color = Color.yellow;
+        Vector2 interactOrigin = (Vector2)transform.position + Vector2.up * heightDisplacement;
+        //Gizmos.DrawWireSphere(interactOrigin, interactionRadius);
     }
 
 }
