@@ -54,6 +54,8 @@ public class DialogueManager : MonoBehaviour
 
     public void StartDialogue(Dialogue dialog)
     {
+        isActive = true;
+        dialogue_canvas.gameObject.SetActive(true);
         currentDialogue = dialog;
         currentLineIndex = 0;
         DisplayLine();
@@ -64,6 +66,7 @@ public class DialogueManager : MonoBehaviour
         if(currentLineIndex >= currentDialogue.lines.Length)
         {
             EndDialogue();
+            return;
         }
 
         DialogueLine line = currentDialogue.lines[currentLineIndex];
