@@ -21,6 +21,9 @@ public class PipePuzzleManager : MonoBehaviour
 
 
     private List<Pipes> possiblePipes = new List<Pipes>();
+
+    private bool recursionAborted = false;
+    private int recursionCount = 0;
     #endregion
 
 
@@ -74,18 +77,21 @@ public class PipePuzzleManager : MonoBehaviour
 
         PlaceSolution();
         PrintGrid();
-        PopulateRemainingGrid();
-        int maxAttempts = 100;
-        int attempts = 0;
-        while (CheckPuzzleIsSolved())
+        if (!recursionAborted)
         {
-            if (attempts >= maxAttempts) break;
-            //Debug.Log("PIPE PUZZLE MANAGER - The puzzle is solved!");
-            RandomlyRotateGrid();
-            attempts++;
-        }
+            PopulateRemainingGrid();
+            int maxAttempts = 100;
+            int attempts = 0;
+            while (CheckPuzzleIsSolved())
+            {
+                if (attempts >= maxAttempts) break;
+                //Debug.Log("PIPE PUZZLE MANAGER - The puzzle is solved!");
+                RandomlyRotateGrid();
+                attempts++;
+            }
 
-        Debug.Log("PIPE PUZZLE MANAGER - Attempts used was: " + attempts);
+            Debug.Log("PIPE PUZZLE MANAGER - Attempts used was: " + attempts);
+        }
 
         PrintGrid();
     }
@@ -102,12 +108,13 @@ public class PipePuzzleManager : MonoBehaviour
 
         Vector2Int currentCoordinate = startingCoordinate;
 
-        ret = RecursiveNavigation(currentCoordinate, new HashSet<Vector2Int>());
+        ret = RecursiveNavigation(currentCoordinate, startPoint, new HashSet<Vector2Int>());
 
         return ret;
     }
 
     //Helper function to the CheckPuzzleIsSolved, recursively navigates through the grid confirming the pipe layout.
+    /*
     private bool RecursiveNavigation(Vector2Int coords, HashSet<Vector2Int> visited)
     {
         if (!IsInGrid(coords))
@@ -123,6 +130,42 @@ public class PipePuzzleManager : MonoBehaviour
         {
             Vector2Int next = coords + grid[coords.x, coords.y].RotatedExit(i);
             if (RecursiveNavigation(next, visited))
+                return true;
+        }
+
+        visited.Remove(coords); // backtrack
+        return false;
+    }*/
+
+    private bool RecursiveNavigation(Vector2Int coords, Vector2Int cameFrom, HashSet<Vector2Int> visited)
+    {
+        if (!IsInGrid(coords))
+            return coords == endPoint;
+        if (grid[coords.x, coords.y] == null)
+            return false;
+        if (visited.Contains(coords))
+            return false;
+
+
+        // Ensure this pipe actually connects back to where we came from
+        bool connectsToCameFrom = false;
+        for (int i = 0; i < grid[coords.x, coords.y].exits.Length; i++)
+        {
+            Vector2Int exit = coords + grid[coords.x, coords.y].RotatedExit(i);
+            if (exit == cameFrom)
+            {
+                connectsToCameFrom = true;
+                break;
+            }
+        }
+        if (!connectsToCameFrom) return false;
+
+        visited.Add(coords);
+        for (int i = 0; i < grid[coords.x, coords.y].exits.Length; i++)
+        {
+            Vector2Int next = coords + grid[coords.x, coords.y].RotatedExit(i);
+            if (next == cameFrom) continue; // don't go back where we came from
+            if (RecursiveNavigation(next, coords, visited))
                 return true;
         }
 
@@ -190,7 +233,7 @@ public class PipePuzzleManager : MonoBehaviour
         Debug.Log("PIPE PUZZLE MANAGER - Start Point Coordinate: " + startingCoordinate.ToString() + "; End Point Coordinate: " + endCoordinate.ToString());
         Vector2Int currentCoordinate = startingCoordinate;
         Vector2Int previousCoordinate = startPoint;
-
+        recursionCount = 0;
         bool done = RecursivePlaceSolution(currentCoordinate, previousCoordinate);
     }
 
@@ -198,6 +241,14 @@ public class PipePuzzleManager : MonoBehaviour
     // For this, the recursive placement needs to check and validate each valid pipe placement. There are 4 pipes with 4 rotations each for a total of 16?
     private bool RecursivePlaceSolution(Vector2Int currentCoordinate, Vector2Int previousCoordinates)
     {
+        if (recursionAborted) return false;
+        recursionCount++;
+        if (recursionCount >= 100000)
+        {
+            Debug.LogError("PIPE PUZZLE MANAGER - Recursion limit hit, aborting");
+            recursionAborted = true;
+            return false;
+        }
         if (currentCoordinate == endPoint) return true; // Base Case, if the puzzle is completed return true.
         if (!IsInGrid(currentCoordinate) || !IsEmptyGrid(currentCoordinate)) return false;
 
@@ -228,7 +279,7 @@ public class PipePuzzleManager : MonoBehaviour
                 done = RecursivePlaceSolution(resultingCoordiante, currentCoordinate);
                 if (done) return done;
             }
-            grid[currentCoordinate.x, currentCoordinate.y] = null;
+            //grid[currentCoordinate.x, currentCoordinate.y] = null;
             validPlacements.Remove(pipe);
         }
 
